@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
+    <script src="./noteManager.js"></script>
+    <script src="./note.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+    <title>Notes</title>
+</head>
+<body>
+
+    <!-- Colored FAB button with ripple -->
+    <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored show-modal demo-fab mdl-shadow--6dp">
+        <i class="material-icons">add</i>
+    </button>
+
+    <dialog class="mdl-dialog">
+        <div class="mdl-dialog__header">
+            <h4>Edit card</h4>
+        </div>
+        <div class="mdl-dialog__content">
+            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="note-pin">
+                <input type="checkbox" id="note-pin" class="mdl-checkbox__input">
+                <span class="mdl-checkbox__label">Pinned</span>
+            </label>
+
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="color" id="note-color" value="#FFFFFF">
+                <label class="mdl-textfield__label" for="note-color">Color</label>
+            </div>
+            
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="note-title">
+                <label class="mdl-textfield__label" for="note-title">Title</label>
+            </div>
+
+            <div class="mdl-textfield mdl-js-textfield">
+                <textarea class="mdl-textfield__input" type="text" rows= "3" id="note-text" ></textarea>
+                <label class="mdl-textfield__label" for="note-text">Text...</label>
+            </div>
+        </div>
+
+        <div class="mdl-dialog__actions">
+            <button type="button" class="mdl-button close" id="js-note-add">Save</button>
+            <button type="button" class="mdl-button close">Cancel</button>
+        </div>
+    </dialog>
+
+    <script>
+        var dialog = document.querySelector('dialog');
+        var showModalButton = document.querySelector('.show-modal');
+        if (! dialog.showModal) {
+        dialogPolyfill.registerDialog(dialog);
+        }
+        showModalButton.addEventListener('click', function() {
+        dialog.showModal();
+        });
+        dialog.querySelector('.close').addEventListener('click', function() {
+            dialog.close();
+        });
+    </script>
+
+    <div id="notes-board" class="mdl-grid">
+    </div>
+    
+    <script>
+        const btnAdd = document.querySelector("#js-note-add")
+        const board = document.querySelector("#notes-board")
+        const notes = []
+
+        const title = document.querySelector("#note-title")
+        const text = document.querySelector("#note-text")
+        const color = document.querySelector("#note-color")
+        const checkbox = document.querySelector("#note-pin")
+
+        const noteManager = new NoteManager("#notes-board")
+
+        btnAdd.addEventListener('click', _ => {
+            noteManager.add({
+                title: title.value,
+                text: text.value,
+                color: color.value,
+                pinned: checkbox.value == 'on'
+            })
+        })
+    </script>
+</body>
+</html>

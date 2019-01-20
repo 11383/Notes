@@ -1,0 +1,14 @@
+input, textarea {
+    display: block;
+}
+
+.demo-card-wide {
+    justify-content: space-between;
+}
+
+.demo-fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
