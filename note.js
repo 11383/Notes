@@ -16,12 +16,6 @@ class Note {
         node.classList.add('mdl-cell', 'mdl-cell--3-col')
 
         node.innerHTML = `
-            Title: ${this.title} <br>
-            Date: ${this.formatDate(this.date)} <br>
-            Text: ${this.text} <br>
-        `
-
-        node.innerHTML = `
         <div class="demo-card-wide mdl-card mdl-shadow--2dp">
             <div class="mdl-card__title">
               <h2 class="mdl-card__title-text">${this.title}</h2>
@@ -30,25 +24,25 @@ class Note {
               ${this.text}
             </div>
             <div class="mdl-card__actions mdl-card--border">
-              <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+              <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect js-note-edit">
                 Edit
               </a>
-              <a class="mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect">
+              <a class="mdl-button mdl-button--accent mdl-js-button mdl-js-ripple-effect js-note-remove">
                 Remove
               </a>
             </div>
             <div class="mdl-card__menu">
               <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-                <i class="material-icons">bookmark</i>
+                <i class="material-icons">${this.pinned ? 'bookmark' : ''}</i>
               </button>
             </div>
         </div>
         `
 
-
-        node.style.backgroundColor = this.color
+        node.querySelector('.js-note-edit').addEventListener('click', () => this.onEdit())
+        node.querySelector('.js-note-remove').addEventListener('click', () => this.onRemove())
+        node.querySelector('.mdl-card').style.backgroundColor = this.color
         
-        node.addEventListener('click', () => this.onRemove())
         this.node = node
         return node
     }
@@ -59,7 +53,11 @@ class Note {
     }
 
     onEdit() {
-        // this.edit(this)
+        this.edit(this)
+    }
+
+    onPinChanged() {
+        
     }
 
     onUpdate(params) {

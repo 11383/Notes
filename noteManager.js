@@ -24,7 +24,26 @@ class NoteManager {
         this.save()
     }
 
-    edit() {}
+    edit(note) {
+        
+        const elements = document.querySelectorAll('.js-noteManager-dialog [data-bind]')
+
+        elements.forEach(element => {
+            element.value = note[element.getAttribute('data-bind')]
+            element.parentNode.classList.add('is-dirty')
+        })
+
+        var dialog = document.querySelector('dialog');
+
+        dialog.showModal();
+
+        console.log(elements)
+        // run dialog to edit
+        console.log('edit', note)
+    }
+
+    update(note) {
+    }
     
     load() {
         if (!localStorage.getItem("notes")) {
