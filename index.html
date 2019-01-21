@@ -16,8 +16,22 @@
     <title>Notes</title>
 </head>
 <body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <span class="mdl-layout-title">MyNotes</span>
+                <div class="mdl-layout-spacer"></div>
+            </div>
+        </header>
+        
+        <main class="mdl-layout__content">
+            <div class="page-content">
+                <div id="notes-board" class="mdl-grid demo-notes-grid">
+                </div>
+            </div>
+        </main>
+    </div>
 
-    <!-- Colored FAB button with ripple -->
     <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored js-noteManager-add demo-fab mdl-shadow--6dp">
         <i class="material-icons">add</i>
     </button>
@@ -57,9 +71,6 @@
             <button type="button" class="mdl-button close">Cancel</button>
         </div>
     </dialog>
-
-    <div id="notes-board" class="mdl-grid">
-    </div>
     
     <script>
         const noteManager = new NoteManager("#notes-board", ".js-noteManager-dialog")

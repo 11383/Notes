@@ -14,7 +14,7 @@ class Note {
 
     render() {
         const node = document.createElement('div')
-        node.classList.add('mdl-cell', 'mdl-cell--3-col')
+        node.classList.add('mdl-cell', 'mdl-cell--4-col-phone', 'mdl-cel--4-col-tablet', 'mdl-cell--3-col-desktop')
 
         node.innerHTML = `
         <div class="demo-card-wide mdl-card mdl-shadow--2dp">
