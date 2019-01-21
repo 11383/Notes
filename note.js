@@ -9,6 +9,7 @@ class Note {
         // callbacks
         this.remove = nodeManager.remove.bind(nodeManager)
         this.edit = nodeManager.edit.bind(nodeManager)
+        this.updateManager = nodeManager.render.bind(nodeManager)
     }
 
     render() {
@@ -32,8 +33,8 @@ class Note {
               </a>
             </div>
             <div class="mdl-card__menu">
-              <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-                <i class="material-icons">${this.pinned ? 'bookmark' : ''}</i>
+              <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect js-note-pin">
+                <i class="material-icons">${this.getPinIcon()}</i>
               </button>
             </div>
         </div>
@@ -41,6 +42,7 @@ class Note {
 
         node.querySelector('.js-note-edit').addEventListener('click', () => this.onEdit())
         node.querySelector('.js-note-remove').addEventListener('click', () => this.onRemove())
+        node.querySelector('.js-note-pin').addEventListener('click', () => this.onPin())
         node.querySelector('.mdl-card').style.backgroundColor = this.color
         
         this.node = node
@@ -48,25 +50,24 @@ class Note {
     }
 
     onRemove() {
-        this.node.remove()
-        this.remove(this)
+      this.node.remove()
+      this.remove(this)
     }
 
     onEdit() {
-        this.edit(this)
+      this.edit(this)
     }
 
-    onPinChanged() {
-        
+    onPin() {
+      this.pinned = !this.pinned
+      this.updateManager()
     }
 
-    onUpdate(params) {
-
+    formatDate() {
+        return (new Date(this.date)).toLocaleString()
     }
 
-    formatDate(date) {
-        return (new Date(date)).toLocaleString()
+    getPinIcon() {
+      return this.pinned ? 'bookmark' : 'bookmark_outline'
     }
 }
-
-// .toISOString()

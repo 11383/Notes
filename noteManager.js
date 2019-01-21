@@ -1,6 +1,7 @@
 class NoteManager {
-    constructor(element) {
+    constructor(element, dialog) {
         this.element = document.querySelector(element)
+        this.dialog = document.querySelector(dialog)
         this.notes = []
         this.load()
     }
@@ -9,40 +10,94 @@ class NoteManager {
         localStorage.setItem("notes", JSON.stringify(this.notes))
     }
 
-    add(params) {
-        const note = new Note(params, this) 
-        
-        this.element.append(note.render())
-        this.notes.push(note)
-
-        this.save()
+    //add note from data from dialog
+    add() {
+        this.showDialog('Add note', {date: Date.now()}, this.addDone)
     }
 
+    edit(note) {
+        this.showDialog('Edit note', note, this.editDone)
+    }
+
+    showDialog(title, params, callbackSave)
+    {
+        // action to show dialog with edit action
+        this.dialog.querySelector('.js-noteManager-title').innerText = title
+        this.dialog.querySelector('.js-noteManager-save').onclick = callbackSave.bind(this)
+
+        // bind values to dialog
+        this.bindValuesToModal(params)
+
+        this.dialog.showModal()
+    }
+
+    // bind values from given param to modal inputs
+    bindValuesToModal(param) {
+        const elements = document.querySelectorAll('.js-noteManager-dialog [data-bind]')
+
+        elements.forEach(element => {
+            if (param[element.getAttribute('data-bind')]) {
+                element.value = param[element.getAttribute('data-bind')]
+                element.parentNode.classList.add('is-dirty')
+            } else {
+                element.value = ""
+                element.parentNode.classList.remove('is-dirty')
+            }
+
+            if (element.type == 'checkbox') {
+                const checkbox = element.parentNode.MaterialCheckbox
+                param[element.getAttribute('data-bind')] ? checkbox.check() : checkbox.uncheck()
+            }
+        })
+    }
+
+    // get object of values from modal
+    valuesBindFromModal() {
+        const params = {}
+        const elements = document.querySelectorAll('.js-noteManager-dialog [data-bind]')
+
+        elements.forEach( element => {
+            let value = element.value
+            element.type == 'checkbox' && (value = element.checked)
+
+            params[element.getAttribute('data-bind')] = value
+        })
+
+        return params
+    }
+
+    // after 'add' dialog closed
+    addDone() {
+        const params = this.valuesBindFromModal()
+
+        this.notes.push(new Note(params, this))
+
+        this.dialog.close()
+        this.save()
+
+        this.render()
+    }
+
+    // after 'edit' dialog closed
+    editDone() {
+        const params = this.valuesBindFromModal()
+
+        this.notes = this.notes.map( note => {
+            if (note.date != params.date) { return note }
+
+            return new Note({...note, ...params}, this) 
+        })
+
+        this.dialog.close()
+        this.save()
+
+        this.render()
+    }
+    
     remove(note) {
         this.notes = this.notes.filter( item => item != note )
 
         this.save()
-    }
-
-    edit(note) {
-        
-        const elements = document.querySelectorAll('.js-noteManager-dialog [data-bind]')
-
-        elements.forEach(element => {
-            element.value = note[element.getAttribute('data-bind')]
-            element.parentNode.classList.add('is-dirty')
-        })
-
-        var dialog = document.querySelector('dialog');
-
-        dialog.showModal();
-
-        console.log(elements)
-        // run dialog to edit
-        console.log('edit', note)
-    }
-
-    update(note) {
     }
     
     load() {
@@ -52,16 +107,26 @@ class NoteManager {
         
         const loadedNotes = JSON.parse(localStorage.getItem("notes"))
         
-        loadedNotes.forEach((params) => this.add(params));
+        this.notes = loadedNotes.map(params => new Note(params, this));
+        
+        this.render()
     }
 
-    renderModal(params = {}) {
-        // todo
+    sortNotes(noteA, noteB) {
+        if (noteA.pinned == noteB.pinned) {
+            return noteB.date - noteA.date
+        }
+        
+        return noteB.pinned - noteA.pinned
     }
 
-    /**
-     * todo
-     * 1. render pinned
-     * 2. render all
-     */
+    render() {
+        this.element.innerHTML = ''
+
+        this.notes
+        .sort(this.sortNotes)
+        .forEach( note => {
+            this.element.appendChild(note.render())
+        })
+    }
 }

@@ -18,13 +18,15 @@
 <body>
 
     <!-- Colored FAB button with ripple -->
-    <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored show-modal demo-fab mdl-shadow--6dp">
+    <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored js-noteManager-add demo-fab mdl-shadow--6dp">
         <i class="material-icons">add</i>
     </button>
 
     <dialog class="mdl-dialog js-noteManager-dialog">
         <div class="mdl-dialog__header">
-            <h4>Edit card</h4>
+            <h4 class="js-noteManager-title">
+                Edit card
+            </h4>
         </div>
         <div class="mdl-dialog__content">
             <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="note-pin">
@@ -46,52 +48,30 @@
                 <textarea class="mdl-textfield__input" type="text" rows= "3" id="note-text" data-bind="text"></textarea>
                 <label class="mdl-textfield__label" for="note-text">Text...</label>
             </div>
+
+            <input type="hidden" data-bind="date"/>
         </div>
 
         <div class="mdl-dialog__actions">
-            <button type="button" class="mdl-button close" id="js-note-add">Save</button>
+            <button type="button" class="mdl-button js-noteManager-save" id="js-note-add">Save</button>
             <button type="button" class="mdl-button close">Cancel</button>
         </div>
     </dialog>
-
-    <script>
-        var dialog = document.querySelector('dialog');
-        var showModalButton = document.querySelector('.show-modal');
-        if (! dialog.showModal) {
-        dialogPolyfill.registerDialog(dialog);
-        }
-        showModalButton.addEventListener('click', function() {
-        dialog.showModal();
-        });
-
-        dialog.querySelectorAll('.close').forEach( btn => {
-            btn.addEventListener('click', _ => dialog.close())
-        })
-    </script>
 
     <div id="notes-board" class="mdl-grid">
     </div>
     
     <script>
-        const btnAdd = document.querySelector("#js-note-add")
-        const board = document.querySelector("#notes-board")
-        const notes = []
+        const noteManager = new NoteManager("#notes-board", ".js-noteManager-dialog")
+        const btnAdd = document.querySelector(".js-noteManager-add")
+              btnAdd.addEventListener('click', _ => noteManager.add())
 
-        const title = document.querySelector("#note-title")
-        const text = document.querySelector("#note-text")
-        const color = document.querySelector("#note-color")
-        const checkbox = document.querySelector("#note-pin")
+        // dialog
+        const dialog = document.querySelector('dialog');
+        
+        !dialog.showModal && dialogPolyfill.registerDialog(dialog)
 
-        const noteManager = new NoteManager("#notes-board")
-
-        btnAdd.addEventListener('click', _ => {
-            noteManager.add({
-                title: title.value,
-                text: text.value,
-                color: color.value,
-                pinned: checkbox.checked
-            })
-        })
+        dialog.querySelector('.close').addEventListener('click', _ => dialog.close())
     </script>
 </body>
 </html>
