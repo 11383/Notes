@@ -1,15 +1,19 @@
+import { dateToString } from './utils.js'
+
 class Note {
-    constructor({title, text, color, pinned = false, date = Date.now()} = {}, nodeManager) {
+    constructor({title, text, color, pinned = false, date = Date.now(), id = Date.now()} = {}, nodeManager) {
         this.title = title
         this.text = text
         this.color = color
         this.pinned = pinned
         this.date = date
+        this.id = id
 
         // callbacks
         this.remove = nodeManager.remove.bind(nodeManager)
         this.edit = nodeManager.edit.bind(nodeManager)
         this.updateManager = nodeManager.render.bind(nodeManager)
+        this.save = nodeManager.save.bind(nodeManager)
     }
 
     render() {
@@ -20,6 +24,7 @@ class Note {
         <div class="demo-card-wide mdl-card mdl-shadow--2dp">
             <div class="mdl-card__title">
               <h2 class="mdl-card__title-text">${this.title}</h2>
+              <h6 class="mdl-card__title-date">${dateToString(this.date)}</h6>
             </div>
             <div class="mdl-card__supporting-text">
               ${this.text}
@@ -61,13 +66,12 @@ class Note {
     onPin() {
       this.pinned = !this.pinned
       this.updateManager()
-    }
-
-    formatDate() {
-        return (new Date(this.date)).toLocaleString()
+      this.save()
     }
 
     getPinIcon() {
       return this.pinned ? 'bookmark' : 'bookmark_outline'
     }
 }
+
+export default Note

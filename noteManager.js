@@ -1,3 +1,6 @@
+import Note from './note.js'
+import { dateToForm, stringToDate } from './utils.js'
+
 class NoteManager {
     constructor(element, dialog) {
         this.element = document.querySelector(element)
@@ -12,7 +15,7 @@ class NoteManager {
 
     //add note from data from dialog
     add() {
-        this.showDialog('Add note', {date: Date.now()}, this.addDone)
+        this.showDialog('Add note', {date: Date.now(), id: Date.now()}, this.addDone)
     }
 
     edit(note) {
@@ -48,6 +51,10 @@ class NoteManager {
                 const checkbox = element.parentNode.MaterialCheckbox
                 param[element.getAttribute('data-bind')] ? checkbox.check() : checkbox.uncheck()
             }
+            
+            if (element.type == 'datetime-local') {
+                element.value = dateToForm(param[element.getAttribute('data-bind')])
+            }
         })
     }
 
@@ -59,6 +66,7 @@ class NoteManager {
         elements.forEach( element => {
             let value = element.value
             element.type == 'checkbox' && (value = element.checked)
+            element.type == 'datetime-local' && (value = (new Date(value).getTime()))
 
             params[element.getAttribute('data-bind')] = value
         })
@@ -83,7 +91,7 @@ class NoteManager {
         const params = this.valuesBindFromModal()
 
         this.notes = this.notes.map( note => {
-            if (note.date != params.date) { return note }
+            if (note.id != params.id) { return note }
 
             return new Note({...note, ...params}, this) 
         })
@@ -130,3 +138,5 @@ class NoteManager {
         })
     }
 }
+
+export default NoteManager
